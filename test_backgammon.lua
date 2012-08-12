@@ -157,11 +157,11 @@ TestBackgammon = {} --class
 
 		local moves = findAllPossibleMoves(player1, board, dice)
 		assertEquals(#moves, 15)
-		--[[
-		for i=1, #moves do
-			prettyPrint(moves[i].board)
-		end
-		]]
+		
+		board = createBoard()
+		assertEquals(numberOfPoints(player2, board), 4)
+		local move = play(player2, board, {5, 3}, numberOfPoints)
+		assertEquals(numberOfPoints(player2, move.board), 5)
 	end
 
 	function TestBackgammon:testFindAllPossibleMovesForDoubleDice()
@@ -186,7 +186,7 @@ TestBackgammon = {} --class
 	end
 
 	function TestBackgammon:testOneMove()
-		board = createBoard()
+		local board = createBoard()
 		for i=1,24 do
 			board.checkers[i] = 0
 		end
@@ -194,12 +194,31 @@ TestBackgammon = {} --class
 		board.checkers[5] = 5
 		board.checkers[4] = 5
 
-		prettyPrint(board)
+		--prettyPrint(board)
 		local dice = {6, 1}
 		local moves = findAllPossibleMoves(player1, board, dice)
-		print(#moves)
+		--print(#moves)
 	end
 
+	function TestBackgammon:testNumberOfPoints()
+		local board = createBoard()
+		assertEquals(numberOfPoints(player1, board), 4)
+		assertEquals(numberOfPoints(player2, board), 4)
+
+		board.checkers[24] = 1
+		board.checkers[23] = 1
+		assertEquals(numberOfPoints(player1, board), 3)
+	end
+
+	function TestBackgammon:testNumberOfBlots()
+		local board = createBoard()
+		assertEquals(numberOfBlots(player1, board), 0)
+		assertEquals(numberOfBlots(player2, board), 0)
+
+		board.checkers[24] = 1
+		board.checkers[23] = 1
+		assertEquals(numberOfBlots(player1, board), 2)
+	end
 -- class TestBackgammon
 
 LuaUnit:run()

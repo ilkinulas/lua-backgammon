@@ -291,7 +291,7 @@ end
 
 function play(player, board, dice, scoreFunction)
 	local moves = findAllPossibleMoves(player, board, dice)
-	local move = selectBestMove(moves, scoreFunction)
+	local move = selectBestMove(moves, player, scoreFunction)
 	return move
 end
 
@@ -476,7 +476,7 @@ end
 returns a list of distinct moves ( distinct board )
 ]]
 function reduceMoves(moves)
-	log("reducing " .. #moves .. " move(s)")
+	--log("reducing " .. #moves .. " move(s)")
 	local result = {}
 	local boardHashset = {}
 	for i=1, #moves do
@@ -489,15 +489,17 @@ function reduceMoves(moves)
 	return result
 end
 
-function selectBestMove(moves, scoreFunction)
+function selectBestMove(moves, player, scoreFunction)
 	local bestMove = nil
 	local bestScore = -1
 	for i=1,#moves do
-		score = scoreFunction(moves[i].board)
+		score = scoreFunction(player, moves[i].board)
 		if score > bestScore then
 			bestMove = moves[i]
+			bestScore = score
 		end
 	end
+	log("best move score " .. bestScore)
 	return bestMove
 end
 
@@ -525,7 +527,7 @@ end
 -- random dice values are stored in the first and secont element of the returned table.
 function rollDice()
 	local dice = {}	
-	math.randomseed( os.time() )
+	--math.randomseed( os.time() )
 	dice[1] = math.random(6)
     dice[2] = math.random(6)
     print("DICE : " .. dice[1] .. "-" .. dice[2])
@@ -545,4 +547,30 @@ function pipCount(board)
         end
     end
     return p1Pip, p2Pip
+end
+
+
+
+function numberOfBlots(player, board)
+	local count = 0
+	for i=1, 24 do
+		if (player == 1 and board.checkers[i] == 1 ) or (player==2 and  board.checkers[i] == -1)  then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+function numberOfBearingOffCheckers(player, board)
+	return board.bearingOffCheckers[player]
+end
+
+function numberOfPoints(player, board)
+	local count = 0
+	for i=1, 24 do
+		if (player == 1 and board.checkers[i] > 1 ) or (player==2 and  board.checkers[i] < -1)  then
+			count = count + 1
+		end
+	end
+	return count
 end

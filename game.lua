@@ -4,11 +4,11 @@ player1 = 1
 player2 = 2
 board = createBoard()
 
-function score1(board)
-	return 0
+function score1(player, board)	
+	return numberOfPoints(player, board) + numberOfBearingOffCheckers(player, board) * 5 - numberOfBlots(player, board) * 2
 end
 
-function score2(board)
+function score2(player, board)
 	return 0
 end
 
