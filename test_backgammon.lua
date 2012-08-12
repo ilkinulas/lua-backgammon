@@ -165,15 +165,24 @@ TestBackgammon = {} --class
 	end
 
 	function TestBackgammon:testFindAllPossibleMovesForDoubleDice()
-		local board = createBoard()
-		local dice = {1, 1}
-		local moves = findAllPossibleMovesForDoubleDice(player2, board, dice)
-		--[[
-		print(#moves)
-		for i=1, #moves do
-			prettyPrint(moves[i].board)
-		end
-		]]
+		local board = createEmptyBoard()
+		board.checkers[1] = -2
+		board.checkers[2] = 3
+		board.checkers[4] = 3
+		board.checkers[5] = 5
+		board.checkers[6] = 2
+		board.checkers[12] = -5
+		board.checkers[16] = 2
+		board.checkers[21] = -3
+		board.checkers[23] = -5
+
+		local moves = findAllPossibleMovesForDoubleDice(player1, board ,{4, 4})
+		assertEquals(#moves, 1)
+		local move = moves[1]
+		assertEquals(6, move.source[1])
+		assertEquals(6, move.source[2])
+		assertEquals(2, move.destination[1])
+		assertEquals(2, move.destination[2])
 	end
 
 	function TestBackgammon:testOneMove()

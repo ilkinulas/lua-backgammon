@@ -345,15 +345,24 @@ function findAllPossibleMovesForDoubleDice(player, board, dice)
 	for i=1, #tmpMoves1 do
 		append(tmpMoves2, findAllPossibleMovesForASingleDie(player, tmpMoves1[i].board, dieValue, tmpMoves1[i]))
 	end
-
+	if #tmpMoves2 == 0 then
+		return tmpMoves1
+	end
 	local tmpMoves3 = {}
 	for i=1, #tmpMoves2 do
 		append(tmpMoves3, findAllPossibleMovesForASingleDie(player, tmpMoves2[i].board, dieValue, tmpMoves2[i]))
+	end
+	if #tmpMoves3 == 0 then
+		return tmpMoves2
 	end
 
 	local tmpMoves4 = {}
 	for i=1, #tmpMoves3 do
 		append(tmpMoves4, findAllPossibleMovesForASingleDie(player, tmpMoves3[i].board, dieValue, tmpMoves3[i]))
+	end
+
+	if #tmpMoves4 == 0 then
+		return tmpMoves3
 	end
 	return reduceMoves(tmpMoves4)
 end
@@ -516,6 +525,7 @@ end
 -- random dice values are stored in the first and secont element of the returned table.
 function rollDice()
 	local dice = {}	
+	math.randomseed( os.time() )
 	dice[1] = math.random(6)
     dice[2] = math.random(6)
     print("DICE : " .. dice[1] .. "-" .. dice[2])
