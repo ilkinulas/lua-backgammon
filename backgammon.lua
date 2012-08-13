@@ -291,7 +291,7 @@ end
 
 function play(player, board, dice, scoreFunction)
 	local moves = findAllPossibleMoves(player, board, dice)
-	local move = selectBestMove(moves, player, scoreFunction)
+	local move = selectBestMove(moves, player, board, scoreFunction)
 	return move
 end
 
@@ -489,11 +489,11 @@ function reduceMoves(moves)
 	return result
 end
 
-function selectBestMove(moves, player, scoreFunction)
+function selectBestMove(moves, player, previousBoard, scoreFunction)
 	local bestMove = nil
-	local bestScore = -1
+	local bestScore = -99999
 	for i=1,#moves do
-		score = scoreFunction(player, moves[i].board)
+		score = scoreFunction(player, previousBoard, moves[i].board)
 		if score > bestScore then
 			bestMove = moves[i]
 			bestScore = score
