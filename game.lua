@@ -4,11 +4,14 @@ player1 = 1
 player2 = 2
 board = createBoard()
 
-function score1(player, board)	
-	return numberOfPoints(player, board) + numberOfBearingOffCheckers(player, board) * 5 - numberOfBlots(player, board) * 2
+function score1(player, previousBoard, board)	
+	local diffBearingOfCheckers = numberOfBearingOffCheckers(player, board) - numberOfBearingOffCheckers(player, previousBoard)
+	local diffMyNumberOfBlots = numberOfBlots(player, board) - numberOfBlots(player, previousBoard)
+	local diffOpponentNumberOfBLots = numberOfBlots(opponent(player), board) - numberOfBlots(opponent(player), previousBoard)
+	return numberOfPoints(player, board) * 5 + diffBearingOfCheckers * 3 - diffMyNumberOfBlots * 2  + diffOpponentNumberOfBLots
 end
 
-function score2(player, board)
+function score2(player, previousBoard, board)
 	return 0
 end
 
