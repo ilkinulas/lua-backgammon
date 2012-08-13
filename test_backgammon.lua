@@ -160,8 +160,6 @@ TestBackgammon = {} --class
 		
 		board = createBoard()
 		assertEquals(numberOfPoints(player2, board), 4)
-		local move = play(player2, board, {5, 3}, numberOfPoints)
-		assertEquals(numberOfPoints(player2, move.board), 5)
 	end
 
 	function TestBackgammon:testFindAllPossibleMovesForDoubleDice()
@@ -219,6 +217,24 @@ TestBackgammon = {} --class
 		board.checkers[23] = 1
 		assertEquals(numberOfBlots(player1, board), 2)
 	end
+
 -- class TestBackgammon
+
+TestTutu  = {}
+	function TestTutu:testSil()
+		local board = createEmptyBoard()
+		board.checkers[1] = 6
+		board.checkers[2] = 3
+		board.checkers[3] = 2
+		board.checkers[5] = 2
+		board.checkers[22] = -3
+		board.checkers[23] = -4
+		board.checkers[24] = 2
+		local moves = findAllPossibleMoves(player1, board, {6, 4})
+		for i=1, #moves do
+			prettyPrintMove(moves[i])
+		end
+		
+	end
 
 LuaUnit:run()
