@@ -492,6 +492,7 @@ end
 function selectBestMove(moves, player, previousBoard, scoreFunction)
 	local bestMove = nil
 	local bestScore = -99999
+	--shuffle(moves)
 	for i=1,#moves do
 		score = scoreFunction(player, previousBoard, moves[i].board)
 		if score > bestScore then
@@ -527,11 +528,12 @@ end
 -- random dice values are stored in the first and secont element of the returned table.
 function rollDice()
 	local dice = {}	
-	--math.randomseed( os.time() )
+	math.randomseed( os.time() )
 	dice[1] = math.random(6)
     dice[2] = math.random(6)
     print("DICE : " .. dice[1] .. "-" .. dice[2])
     return dice
+
 end
 
 function pipCount(board) 
