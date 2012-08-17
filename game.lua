@@ -5,16 +5,26 @@ player2 = 2
 board = createBoard()
 
 function score1(player, previousBoard, board)	
+	local pointsCoefficient = 0.5
+	local bearingOffCoefficient = 0.4
+	local myBlotsCoefficient = 0.3
+	local opponentCoefficient = 0.2
+
 	local diffBearingOfCheckers = numberOfBearingOffCheckers(player, board) - numberOfBearingOffCheckers(player, previousBoard)
 	local diffMyNumberOfBlots = numberOfBlots(player, board) - numberOfBlots(player, previousBoard)
 	local diffOpponentNumberOfBLots = numberOfBlots(opponent(player), board) - numberOfBlots(opponent(player), previousBoard)
-	return numberOfPoints(player, board) * 5 + diffBearingOfCheckers * 3 - diffMyNumberOfBlots * 2  + diffOpponentNumberOfBLots
+
+	if isCollecting(player, board) then
+		pointsCoefficient = 0.0
+		myBlotsCoefficient = 0.0
+	end
+
+	return numberOfPoints(player, board) * pointsCoefficient + diffBearingOfCheckers * bearingOffCoefficient - diffMyNumberOfBlots * myBlotsCoefficient + diffOpponentNumberOfBLots * opponentCoefficient
 end
 
 function score2(player, previousBoard, board)
 	return 0
 end
-
 
 local interactive = false
 
