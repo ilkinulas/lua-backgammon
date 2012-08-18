@@ -18,6 +18,73 @@ function log(s)
 		print(s) 
 	end
 end
+--[[
+-- Given a board and dice, play function finds all possible moves and tries to select
+-- the best move for player if there are any moves possible.
+-- returns nil if the player can not make a move.
+-- selectBestMove function decides which move to make.
+
+@param player : 1 or 2
+@param board  : state of board (checkers...) before making a move
+@param dice   : dice values, a table of two elements ie {3,4}
+@param selectBestMoveFunction : This function decides which move to play. 
+                                AI logic should be implemented in this function.
+                                If nil then a random move is selected.
+]]
+function play(player, board, dice, selectBestMoveFunction)
+	local moves = findAllPossibleMoves(player, board, dice)
+	if selectBestMoveFunction then
+		return selectBestMoveFunction(moves, player, board)
+	else
+		if moves then
+			shuffle(moves)
+			return moves[1]
+		else
+			return nil
+		end
+	end
+end
+
+--[[
+-- This function  selects best move by applying backgammon strategies.
+-- You can implement your own "selectBestMove" functions if you think the current implementation is not clever enough :)
+
+@param moves : a list of moves
+@parama player : 1 or 2
+@param previousBoard : state of the board before making a move.
+]]
+function selectBestMove(moves, player, previousBoard)
+	local bestMove = nil
+	local bestScore = -99999
+	
+	for i=1,#moves do
+		local tmpScore = score(player, previousBoard, moves[i].board)
+		if tmpScore > bestScore then
+			bestMove = moves[i]
+			bestScore = tmpScore
+		end
+	end
+	return bestMove
+end
+
+--[[Calculates board score, this function can be customized]]
+function score(player, previousBoard, board)	
+	local pointsCoefficient = 0.5
+	local bearingOffCoefficient = 0.4
+	local myBlotsCoefficient = 0.3
+	local opponentCoefficient = 0.2
+
+	local diffBearingOfCheckers = numberOfBearingOffCheckers(player, board) - numberOfBearingOffCheckers(player, previousBoard)
+	local diffMyNumberOfBlots = numberOfBlots(player, board) - numberOfBlots(player, previousBoard)
+	local diffOpponentNumberOfBLots = numberOfBlots(opponent(player), board) - numberOfBlots(opponent(player), previousBoard)
+
+	if isCollecting(player, board) then
+		pointsCoefficient = 0.0
+		myBlotsCoefficient = 0.0
+	end
+
+	return numberOfPoints(player, board) * pointsCoefficient + diffBearingOfCheckers * bearingOffCoefficient - diffMyNumberOfBlots * myBlotsCoefficient + diffOpponentNumberOfBLots * opponentCoefficient
+end
 
 -- player 1 has positive checkers.
 -- player 2 has negative checkers.
@@ -289,12 +356,6 @@ function isCollecting( player, board)
 	return true
 end
 
-function play(player, board, dice, scoreFunction)
-	local moves = findAllPossibleMoves(player, board, dice)
-	local move = selectBestMove(moves, player, board, scoreFunction)
-	return move
-end
-
 function findAllPossibleMoves(player, board, dice)
 	if dice[1] ~= dice[2] then
 		return findAllPossibleMovesForDifferentDiceValues(player, board, dice)
@@ -488,22 +549,6 @@ function reduceMoves(moves)
 	end
 	return result
 end
-
-function selectBestMove(moves, player, previousBoard, scoreFunction)
-	local bestMove = nil
-	local bestScore = -99999
-	--shuffle(moves)
-	for i=1,#moves do
-		score = scoreFunction(player, previousBoard, moves[i].board)
-		if score > bestScore then
-			bestMove = moves[i]
-			bestScore = score
-		end
-	end
-	log("best move score " .. bestScore)
-	return bestMove
-end
-
 
 function hashOfBoard(board) 
 	local hash = ""
